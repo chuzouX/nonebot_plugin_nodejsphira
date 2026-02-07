@@ -1,3 +1,5 @@
+[](https://github.com/A-kirami/nonebot-plugin-template/raw/resources/nbp_logo.png)
+
 # nonebot-plugin-nodejsphira
 
 ✨ **Phira 游戏服务器管理与监控插件** ✨
