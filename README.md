@@ -1,4 +1,4 @@
-[](https://github.com/A-kirami/nonebot-plugin-template/raw/resources/nbp_logo.png)
+![](https://github.com/A-kirami/nonebot-plugin-template/raw/resources/nbp_logo.png)
 
 # nonebot-plugin-nodejsphira
 
