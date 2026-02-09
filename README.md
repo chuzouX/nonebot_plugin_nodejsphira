@@ -46,6 +46,7 @@ nb plugin install nonebot-plugin-nodejsphira
 | `PHIRA_CHECK_EMAIL` | str | 无 | Phira 检测账号邮箱 (用于 /status) |
 | `PHIRA_CHECK_PASSWORD` | str | 无 | Phira 检测账号密码 (用于 /status) |
 | `PHIRA_CHECK_SERVER` | str | `mp.phira.cn:12346` | 默认检测的 TCP 服务器地址 |
+| `PHIRA_SERVER_NAME` | str | 无 | Phira 服务器名称展示 (用于 /status) |
 | `PHIRA_ADMIN_SECRET` | str | 无 | **必填**。需在 [phira-mp-nodejsver](https://github.com/chuzouX/phira-mp-nodejsver) 项目中设置 |
 | `SUPERUSERS` | list | `[]` | 机器人管理员列表 (OpenID) |
 

@@ -44,7 +44,7 @@ async def handle_status_check(bot: Bot, event: Event):
             "",
             f"{status_icon} Phira 协议检测结果",
             "━━━━━━━━━━━━━━",
-            f"目标: {safe_host}:{port}",
+            f"目标: {plugin_config.phira_server_name}",
             f"状态: {'在线' if success else '异常'}",
             f"详情: {message}"
         ]

@@ -2,7 +2,6 @@ from nonebot import on_command, get_driver
 from nonebot.adapters.qq import Bot, Event
 
 config = get_driver().config
-# 恢复为从 NoneBot 配置动态读取，移除硬编码 ID
 superusers = getattr(config, "superusers", set())
 
 help_cmd = on_command("help", aliases={"帮助"}, priority=5, block=True)
@@ -17,10 +16,9 @@ async def _(bot: Bot, event: Event):
         "--- FunXLink_Bot 帮助菜单 ---\n",
         "📖 基础命令:\n",
         "/room - 获取服务器房间列表 (文本详情)\n",
-        "/room {id} - 获取指定房间详细列表 (文本详情)\n",
         "/proom - 查看房间列表长截图 (网页截图)\n",
-        "/proom {id} - 查看指定房间详细画面 (网页截图)\n",
-        "/status - 查看 Phira 服务器运行状态\n",
+        "/status - Phira 服务器协议握手检测 (文本)\n",
+        "/pstatus - 查看 Phira 节点运行状态图 (网页截图)\n",
         "/ping - 查看机器人及服务器连接延迟\n",
         "/help - 显示本帮助菜单\n"
     ]

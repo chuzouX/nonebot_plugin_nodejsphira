@@ -8,7 +8,6 @@ except ImportError:
     render_template = None
 
 config = get_driver().config
-# 恢复为从 NoneBot 配置动态读取，移除硬编码 ID
 superusers = getattr(config, "superusers", set())
 
 ping_cmd = on_command("ping", priority=1, block=True)
