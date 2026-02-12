@@ -3,6 +3,7 @@ from nonebot.adapters.qq import Message, Bot, Event
 from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import get_plugin_config
+from datetime import datetime
 
 from ..config import Config
 from ..utils.api import admin_request
@@ -89,3 +90,111 @@ async def _(args: Message = CommandArg()):
     rid = args.extract_plain_text().strip()
     res = await req("POST", "/api/admin/close-room", {"roomId": rid})
     await close_cmd.finish(f"结果: {res}")
+
+# 8. 切换模式 (循环/普通)
+tmode_cmd = on_command("tmode", priority=5, permission=SUPERUSER, block=True)
+@tmode_cmd.handle()
+async def _(args: Message = CommandArg()):
+    rid = args.extract_plain_text().strip()
+    if not rid: await tmode_cmd.finish("用法: /tmode 房间ID")
+    res = await req("POST", "/api/admin/toggle-mode", {"roomId": rid})
+    await tmode_cmd.finish(f"结果: {res}")
+
+# 9. 房间系统消息
+smsg_cmd = on_command("smsg", priority=5, permission=SUPERUSER, block=True)
+@smsg_cmd.handle()
+async def _(args: Message = CommandArg()):
+    txt = args.extract_plain_text().strip().split(maxsplit=1)
+    if len(txt) < 2: await smsg_cmd.finish("用法: /smsg 房间ID 内容")
+    res = await req("POST", "/api/admin/server-message", {"roomId": txt[0], "content": txt[1]})
+    await smsg_cmd.finish(f"结果: {res}")
+
+# 10. 批量操作
+bulk_cmd = on_command("bulk", priority=5, permission=SUPERUSER, block=True)
+@bulk_cmd.handle()
+async def _(args: Message = CommandArg()):
+    txt = args.extract_plain_text().strip().split()
+    if len(txt) < 2: await bulk_cmd.finish("用法: /bulk 动作 目标 [数值]")
+    payload = {"action": txt[0], "target": txt[1]}
+    if len(txt) > 2: payload["value"] = txt[2]
+    res = await req("POST", "/api/admin/bulk-action", payload)
+    await bulk_cmd.finish(f"结果: {res}")
+
+# 11. 封禁列表
+bans_cmd = on_command("bans", priority=5, permission=SUPERUSER, block=True)
+@bans_cmd.handle()
+async def _():
+    data = await req("GET", "/api/admin/bans")
+    if isinstance(data, dict) and "error" in data:
+        await bans_cmd.finish(f"查询失败: {data['error']}")
+    
+    msg = ["", "🚫 当前封禁列表:"]
+    
+    id_bans = data.get("idBans", [])
+    msg.append(f"\n[用户 ID 封禁 ({len(id_bans)})]")
+    if not id_bans:
+        msg.append("  无")
+    for b in id_bans:
+        created = datetime.fromtimestamp(b['createdAt']/1000).strftime('%Y-%m-%d %H:%M')
+        expires = "永久" if not b.get('expiresAt') else datetime.fromtimestamp(b['expiresAt']/1000).strftime('%Y-%m-%d %H:%M')
+        msg.append(f"• ID: {b['target']} | 原因: {b['reason']}\n  管理员: {b['adminName']} | 过期: {expires}")
+
+    ip_bans = data.get("ipBans", [])
+    msg.append(f"\n[IP 封禁 ({len(ip_bans)})]")
+    if not ip_bans:
+        msg.append("  无")
+    for b in ip_bans:
+        expires = "永久" if not b.get('expiresAt') else datetime.fromtimestamp(b['expiresAt']/1000).strftime('%Y-%m-%d %H:%M')
+        msg.append(f"• IP: {b['target']}\n  原因: {b['reason']}\n  过期: {expires}")
+
+    await bans_cmd.finish("\n".join(msg))
+
+
+# 12. 封禁
+ban_cmd = on_command("ban", priority=5, permission=SUPERUSER, block=True)
+@ban_cmd.handle()
+async def _(args: Message = CommandArg()):
+    txt = args.extract_plain_text().strip().split()
+    if len(txt) < 2: await ban_cmd.finish("用法: /ban 类型(id/ip) 目标 [时长] [原因]")
+    payload = {"type": txt[0], "target": txt[1]}
+    if len(txt) > 2: payload["duration"] = txt[2]
+    if len(txt) > 3: payload["reason"] = " ".join(txt[3:])
+    res = await req("POST", "/api/admin/ban", payload)
+    await ban_cmd.finish(f"结果: {res}")
+
+# 13. 解封
+unban_cmd = on_command("unban", priority=5, permission=SUPERUSER, block=True)
+@unban_cmd.handle()
+async def _(args: Message = CommandArg()):
+    txt = args.extract_plain_text().strip().split()
+    if len(txt) < 2: await unban_cmd.finish("用法: /unban 类型(id/ip) 目标")
+    res = await req("POST", "/api/admin/unban", {"type": txt[0], "target": txt[1]})
+    await unban_cmd.finish(f"结果: {res}")
+
+# 14. 登录黑名单
+blist_cmd = on_command("blist", priority=5, permission=SUPERUSER, block=True)
+@blist_cmd.handle()
+async def _():
+    data = await req("GET", "/api/admin/login-blacklist")
+    await blist_cmd.finish(f"黑名单: {data}")
+
+# 15. 黑名单IP
+blip_cmd = on_command("blip", priority=5, permission=SUPERUSER, block=True)
+@blip_cmd.handle()
+async def _(args: Message = CommandArg()):
+    txt = args.extract_plain_text().strip().split()
+    if not txt: await blip_cmd.finish("用法: /blip IP [时长]")
+    payload = {"ip": txt[0]}
+    if len(txt) > 1: payload["duration"] = txt[1]
+    res = await req("POST", "/api/admin/blacklist-ip", payload)
+    await blip_cmd.finish(f"结果: {res}")
+
+# 16. 移除黑名单IP
+ublip_cmd = on_command("ublip", priority=5, permission=SUPERUSER, block=True)
+@ublip_cmd.handle()
+async def _(args: Message = CommandArg()):
+    ip = args.extract_plain_text().strip()
+    if not ip: await ublip_cmd.finish("用法: /ublip IP")
+    res = await req("POST", "/api/admin/unblacklist-ip", {"ip": ip})
+    await ublip_cmd.finish(f"结果: {res}")
+

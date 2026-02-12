@@ -1,11 +1,9 @@
-from nonebot import on_command, get_driver
+from nonebot import on_command, get_driver, require
 from nonebot.adapters.qq import Bot, Event
 from nonebot.log import logger
 
-try:
-    from nonebot_plugin_status import render_template
-except ImportError:
-    render_template = None
+require("nonebot_plugin_status")
+from nonebot_plugin_status import render_template
 
 config = get_driver().config
 superusers = getattr(config, "superusers", set())

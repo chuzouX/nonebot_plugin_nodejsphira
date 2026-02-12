@@ -2,6 +2,7 @@ from nonebot import require
 from nonebot.plugin import PluginMetadata
 
 require("nonebot_plugin_htmlrender")
+require("nonebot_plugin_status")
 
 from .config import Config
 from .matchers import room, status, ping, admin, help

@@ -52,15 +52,15 @@ async def admin_request(
     except Exception as e:
         return {"error": f"鉴权生成失败: {e}"}
         
-    params = {"admin_secret": token}
+    headers = {"X-Admin-Secret": token}
     url = f"{base_url.rstrip('/')}{endpoint}"
     
     async with httpx.AsyncClient() as client:
         try:
             if method.upper() == "GET":
-                response = await client.get(url, params=params, timeout=15.0)
+                response = await client.get(url, headers=headers, timeout=15.0)
             else:
-                response = await client.post(url, params=params, json=json_data, timeout=15.0)
+                response = await client.post(url, headers=headers, json=json_data, timeout=15.0)
             return response.json()
         except Exception as e:
             logger.error(f"API 请求失败: {e}")

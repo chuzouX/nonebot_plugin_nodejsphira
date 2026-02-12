@@ -33,7 +33,16 @@ async def _(bot: Bot, event: Event):
             "/fstart {RID} - 强制开始指定房间对局\n",
             "/lock {RID} - 锁定/解锁房间\n",
             "/maxp {RID} {人数} - 修改房间最大人数限制\n",
-            "/close {RID} - 强制关闭指定房间\n"
+            "/close {RID} - 强制关闭指定房间\n",
+            "/tmode {RID} - 切换房间模式 (循环/普通)\n",
+            "/smsg {RID} {内容} - 发送房间系统消息\n",
+            "/bulk {动作} {目标} [值] - 批量房间操作\n",
+            "/bans - 查看封禁列表\n",
+            "/ban {类型} {目标} [时长] [原因] - 执行封禁\n",
+            "/unban {类型} {目标} - 解除封禁\n",
+            "/blist - 查看登录黑名单\n",
+            "/blip {IP} [时长] - 黑名单 IP\n",
+            "/ublip {IP} - 移除黑名单 IP\n"
         ])
     else:
         help_msg.append("提示: 管理员功能仅限配置文件中设置的 SUPERUSERS 使用")
