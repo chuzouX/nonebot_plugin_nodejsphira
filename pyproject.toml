@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nonebot-plugin-nodejsphira"
-version = "0.1.6"
+version = "0.1.7"
 description = "Phira Server Manager plugin for NoneBot2"
 readme = "README.md"
 requires-python = ">=3.10"
